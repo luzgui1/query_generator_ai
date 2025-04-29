@@ -1,0 +1,17 @@
+owner: "guilherme.luz@luizalabs.com"
+tribe: "bi-netshoes"
+vertical: "netshoes"
+application:
+  description: "Chatbot de IA para criação de queries no BQ"
+  name: "CuboAI"
+  languages: "Python"
+security:
+  url_homolog: "https://127.0.0.1"
+  url_prod: "https://127.0.0.1"
+  businessRisk: "Low"
+  public: "Internal"
+  accessibility: "No"
+  waf: "No"
+  qradar: "No"
+  authentication: "Not apply"
+  administration: "Not apply"

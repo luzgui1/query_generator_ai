@@ -1,0 +1,12 @@
+stages:
+  - security-gate
+
+security:
+  stage: security-gate
+  image: $CIKNIFE_IMAGE
+  script:
+    - ci-knife security-scanner
+  rules:
+    - if: $CI_COMMIT_REF_NAME == "main"
+  cache: []
+  
