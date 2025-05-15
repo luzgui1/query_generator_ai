@@ -3,14 +3,14 @@ from google.generativeai import GenerativeModel
 from google.cloud import bigquery
 import pandas as pd
 
-### Query Builder
-
 def get_schema(path):
 
     with open(path, "r", encoding="utf-8") as doc:
         schema = doc.read()
 
     return schema
+
+### Query Builder
 
 generate_query = FunctionDeclaration(
     name="generate_query",

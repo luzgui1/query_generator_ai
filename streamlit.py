@@ -11,6 +11,8 @@ if "username" not in st.session_state:
     if username_input:
         st.session_state.username = username_input
         st.session_state[username_input] = []
+        st.session_state[f"{username_input}_sql"] = ""
+        st.session_state[f"{username_input}_preview"] = []
         st.rerun() 
 else:
     username = st.session_state.username
@@ -24,7 +26,16 @@ else:
             st.warning("Insira seu pedido primeiro.")
         else:
             with st.spinner("Rodando a análise solicitada..."):
-                result = run_chatbot(user_input, memory_st=st.session_state[username], user_name=username)
+                result = run_chatbot(
+                                user_input,
+                                memory_st=st.session_state[username],
+                                user_name=username,
+                                last_sql=st.session_state.get(f"{username}_sql", ""),
+                                last_preview=st.session_state.get(f"{username}_preview", [])
+                            )
+
+            st.session_state[f"{username}_sql"] = result.get("sql", "")
+            st.session_state[f"{username}_preview"] = result.get("preview", [])
 
             if result.get("sql"):
                 st.subheader("Gemini's SQL")
@@ -39,3 +50,6 @@ else:
                 st.write(result["summary"])
             else:
                 st.info("No summary generated.")
+
+
+
