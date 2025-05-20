@@ -5,7 +5,7 @@ import pandas as pd
 st.set_page_config(page_title="Data Analyst Assistant", layout="wide")
 st.title("📊 Assistente CUBO (Gemini-powered)")
 
-# Step 1: Ask for username once
+# Configuração do usuário para separação de históricos
 if "username" not in st.session_state:
     username_input = st.text_input("Seu nome de usuário:")
     if username_input:
@@ -18,7 +18,7 @@ else:
     username = st.session_state.username
     st.markdown(f"👤 **Usuário atual:** `{username}`")
 
-    # Step 2: User interaction
+    # Interação do usuário
     user_input = st.text_area("Descreva seu pedido:", height=150)
 
     if st.button("Executar análise"):

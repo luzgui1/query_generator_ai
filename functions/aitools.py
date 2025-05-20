@@ -3,58 +3,30 @@ from google.generativeai import GenerativeModel
 from google.cloud import bigquery
 import pandas as pd
 
+## Schema Reader
+read_schema = FunctionDeclaration(
+    name = "read_schema",
+    description=("Leia a documentação disponível para te auxiliar a compreender como construir queries " 
+                "sempre que o usuário buscar por uma análise de dados"
+                ),
+    parameters={
+        "type":"object",
+        "properties": {
+            "path":{
+                "type":"string",
+                "description":"O caminho para acessar a documentação disponível."
+            }
+        },
+        "required":["path"]
+    }
+)
+
 def get_schema(path):
 
     with open(path, "r", encoding="utf-8") as doc:
         schema = doc.read()
 
     return schema
-
-### Query Builder
-
-generate_query = FunctionDeclaration(
-    name="generate_query",
-    description="Generates a SQL SELECT query based on internal documentation and user request.",
-    parameters={
-        "type": "object",
-        "properties": {
-            "user_request": {
-                "type": "string",
-                "description": "The user request needing translation to SQL."
-            }
-        },
-        "required": ["user_request"]
-    }
-)
-
-def build_query(user_request: str,schema_text):
-
-    doc_model = GenerativeModel(model_name="models/gemini-1.5-flash")
-
-    prompt = f"""
-    You are an expert data analyst working with Google BigQuery.
-
-    Always use Google BigQuery documentation to build your queries.
-
-    Here is the internal schema documentation:
-    \"\"\"
-    {schema_text}
-    \"\"\"
-
-    Based on that, generate the most accurate SELECT statement (BigQuery) to fulfill this request:
-    \"{user_request}\"
-
-    You have expert knowledge of how to write efficient SQL for BigQuery. Avoid SELECT *.
-
-    Only return the SQL query itself, without triple backticks or Markdown formatting.
-    """
-
-    response = doc_model.generate_content(prompt)
-
-    # Extract text from response
-    query = response.text.strip()
-
-    return {"query": query}
 
 ## Query executor
 
