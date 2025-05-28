@@ -8,13 +8,13 @@ import logging
 
 class GeminiAgents():
 
-    def __init__(self,model,schema,user_name):
+    def __init__(self,model,doc,user_name):
         """
         Inicialização de multi-agentes.
         """
 
         self.model = model
-        self.schema = schema
+        self.doc = doc
         self.user_name = user_name
         self.logger = logging.getLogger("GeminiAssistant")
         self.intent = ""
@@ -38,6 +38,24 @@ class GeminiAgents():
         - "question"
         - "non-related"
 
+        _____________________
+        Exemplos:
+        - Usuário: "Preciso que realizar uma análise de estoque total do dia de ontem"
+        - Resultado: "analysis-request"
+
+        - Usuário: "Na análise anterior, preciso que você altere para que seja uma análise agregada total, e não quebrada por sku"
+        - Resultado: "correction-request"
+
+        - Usuário: "Não entendi o resultado apresentado"
+        - Resultado: "explanation-request"
+
+        - Usuário: "Poderia me falar mais acerca das variáveis existentes na tabela de estoque?"
+        - Resultado: "question"
+
+        - Usuário: "tô com fome"
+        - Resultado: "non-related"
+        _____________________
+
         Retorne APENAS a categoria. Nada mais.
 
         Contexto:
@@ -50,7 +68,49 @@ class GeminiAgents():
         self.intent = self.model.generate_content(prompt)
 
         return self.intent.text.strip().lower()
+    
+    def schema_chooser(self,user_input: str,schema_dir: str):
+        """
+        Agente responsável pela escolha do schema que será acessado.
+        """
 
+        prompt = f"""
+        Seu papel é identificar se o pedido de análise do usuário é relacionado a essas opções:
+
+            - revenue
+            - stock
+            - none
+        
+        Input do usuário: {user_input}
+        
+            Se relacionado a receita -> revenue
+            Se relacionado a estoque -> stock
+            Se relacionado a receita E estoque -> revenue,stock
+            Se não tiver relação com nenhuma das opções acima -> none
+
+        Retorne APENAS alguma das opções acima.
+        """
+
+        response = self.model.generate_content(prompt)
+        raw_types = response.text.strip().lower()
+
+        if raw_types == "none":
+            chosen = []
+        else:
+            chosen = [t.strip() for t in raw_types.split(",") if t.strip()]
+        
+        schemas = {}
+        for t in chosen:
+            md_path =  f"{schema_dir}\{t}.md"
+            try:
+                with open(md_path,"r",encoding='utf-8') as d:
+                    schemas[t] = d.read()
+            except FileNotFoundError:
+                schemas[t] = f"**Erro:** arquivo {md_path} não encontrado."
+
+        document = "\n\n".join(schemas[t] for t in chosen)
+
+        return {"type":chosen,"schema":document}
     
     def query_builder(self,intent:str,user_input: str, schema:str, last_summary="", last_sql=""):
         """
@@ -61,6 +121,9 @@ class GeminiAgents():
             prompt = f"""
             Você é um agente gerador de queries no Google BigQuery.
             Levando em consideração a documentação do schema apresentado e também o user_input, gere uma query que atenda à necessidade do usuário.
+
+            *DOCUMENTAÇÃO GERAL:*
+            {self.doc}
 
             *SCHEMA:*
             {schema}
@@ -114,7 +177,7 @@ class GeminiAgents():
 
             return query.text.strip()
     
-    def general_response_builder(self,intent: str,user_input: str, schema:str,last_summary="", last_sql=""):
+    def general_response_builder(self,intent: str,user_input: str,last_summary="", last_sql=""):
 
         """
         Agentes responsáveis por lidar com questões não-relacionadas à análises trazidas pelo usuário.
@@ -152,7 +215,7 @@ class GeminiAgents():
             {last_sql}
 
             **DOCUMENTAÇÃO E SCHEMA DE DADOS:**
-            {schema}
+            {self.doc}
 
 
             Com base na dúvida do usuário e no histórico da conversa, responda acerca da dúvida que o usuário tenha. Sempre com educação.
