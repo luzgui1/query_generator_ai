@@ -46,7 +46,6 @@ execute_query = FunctionDeclaration(
 )
 
 def run_query(query: str,creds):
-    try:
         client = bigquery.Client.from_service_account_json(creds)
         print("Conexão com o BigQuery efetuada.")
 
@@ -55,10 +54,6 @@ def run_query(query: str,creds):
         dataframe = pd.DataFrame(result)
 
         return {"data_preview": dataframe.head(10).to_dict(orient="records")}
-
-    except Exception as e:
-        print(f"Erro ao executar consulta: {e}")
-        return {"error": str(e)}
 
 ## Send data-to google bucket
 
