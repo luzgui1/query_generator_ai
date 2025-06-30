@@ -1,78 +1,201 @@
-2025-06-11 15:04:14,760 [INFO] GeminiAssistant: [USER INPUT] (augusto_teste003) opa, preciso de uma análise de estoque total do dia de ontem
-2025-06-11 15:04:15,715 [INFO] GeminiAssistant: [AGENT_INTENT_CLASSIFIER]: analysis-request
-2025-06-11 15:04:16,290 [INFO] GeminiAssistant: [AGENT_SCHEMA_CHOOSER]: 'type':['stock'],'document':data/context\stock.md
-2025-06-11 15:04:17,649 [INFO] GeminiAssistant: [AGENT_QUERY_BUILDER]: 
+2025-06-16 15:54:09,899 [INFO] GeminiAssistant: [USER INPUT] (this-is-a-test) Oi! Quero uma análise de custo estoque total do dia de ontem
+2025-06-16 15:54:11,691 [INFO] GeminiAssistant: [AGENT_INTENT_CLASSIFIER]: analysis-request
+2025-06-16 15:54:13,391 [INFO] GeminiAssistant: [AGENT_SCHEMA_CHOOSER]: 'type':['stock'],'document':data/context\stock.md
+2025-06-16 15:54:15,532 [INFO] GeminiAssistant: [AGENT_QUERY_BUILDER]: 
 SELECT
-    DATE(sid_tempo) AS data,
-    SUM(qtd_estoque_saldo) AS total_estoque_saldo,
-    SUM(vlr_custo_estoque) AS valor_total_custo_estoque
-FROM
+    SUM(vlr_custo_estoque) AS total_custo_estoque_ontem
+  FROM
     `maga-bigdata.nets_gestao_info.tgi_estoque_hist`
-WHERE
-    sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
-GROUP BY
-    data
+  WHERE sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
 
-2025-06-11 15:04:20,021 [INFO] GeminiAssistant: [AGENT_FINAL_RESPONSER]: Olá! Entendi que você solicitou uma análise do estoque total de ontem.
+2025-06-16 15:54:20,315 [INFO] GeminiAssistant: [AGENT_FINAL_RESPONSER]: Olá! Entendi que você solicitou uma análise do custo total do estoque referente ao dia de ontem.
 
 **Análise:**
 
-*   **Data:** 10 de junho de 2025
-*   **Estoque Total (saldo):** 2.008.028 unidades
-*   **Valor Total do Estoque (custo):** R$ 204.796.340,92
+O custo total do estoque no dia de ontem foi de R$ 203.847.259,44.
 
-**Sugestões:**
+**Próximos Passos:**
 
-*   Para uma análise mais completa, podemos comparar o estoque de ontem com o de outros dias, identificando tendências de aumento ou diminuição.
-*   Podemos também detalhar o estoque por produto ou categoria, para identificar quais itens têm maior ou menor giro.
-2025-06-11 15:15:08,101 [INFO] GeminiAssistant: [USER INPUT] (augusto_teste003) inclua uma coluna de faturamento total do dia de ontem.
-2025-06-11 15:15:09,534 [INFO] GeminiAssistant: [AGENT_INTENT_CLASSIFIER]: include_schema
-2025-06-11 15:15:11,200 [INFO] GeminiAssistant: [AGENT_SCHEMA_CHOOSER]: 'type':['revenue'],'document':data/context\revenue.md
-2025-06-11 15:15:14,053 [INFO] GeminiAssistant: [AGENT_QUERY_BUILDER]: 
-SELECT
-    DATE(tgi_estoque_hist.sid_tempo) AS data,
-    SUM(tgi_estoque_hist.qtd_estoque_saldo) AS total_estoque_saldo,
-    SUM(tgi_estoque_hist.vlr_custo_estoque) AS valor_total_custo_estoque,
-    SUM(tgi_receita.vlr_rec_bruta) AS faturamento_total
-FROM
-    `maga-bigdata.nets_gestao_info.tgi_estoque_hist`
-LEFT JOIN
-    `maga-bigdata.nets_gestao_info.tgi_receita` ON tgi_estoque_hist.sid_tempo = tgi_receita.sid_tempo
-WHERE
-    tgi_estoque_hist.sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
-GROUP BY
-    data
+Para análises futuras, você pode refinar a consulta para incluir:
 
-2025-06-11 15:15:17,639 [INFO] GeminiAssistant: [QUERY_EXECUTION_ERROR]: 400 Unrecognized name: tgi_estoque_hist at [10:52]; reason: invalidQuery, location: query, message: Unrecognized name: tgi_estoque_hist at [10:52]
-
-Location: US
-Job ID: 07d29bfa-0f5a-49e9-8403-62ab0b60baed
-
-2025-06-11 15:15:17,639 [INFO] GeminiAssistant: [AGENT_QUERY_FIXER]: SELECT
-    DATE(tgi_estoque_hist.sid_tempo) AS data,
-    SUM(tgi_estoque_hist.qtd_estoque_saldo) AS total_estoque_saldo,
-    SUM(tgi_estoque_hist.vlr_custo_estoque) AS valor_total_custo_estoque,
-    SUM(tgi_receita.vlr_rec_bruta) AS faturamento_total
-FROM
-    `maga-bigdata.nets_gestao_info.tgi_estoque_hist` AS tgi_estoque_hist
-LEFT JOIN
-    `maga-bigdata.nets_gestao_info.tgi_receita` AS tgi_receita ON tgi_estoque_hist.sid_tempo = tgi_receita.sid_tempo
-WHERE
-    tgi_estoque_hist.sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
-    AND tgi_receita.sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
-GROUP BY
-    data
-2025-06-11 15:15:33,479 [INFO] GeminiAssistant: [AGENT_FINAL_RESPONSER]: Olá! Entendi que você solicitou a inclusão do faturamento total na análise de estoque de ontem.
+*   **Detalhes por Categoria de Produto:** Para identificar quais categorias contribuem mais para o custo total.
+*   **Comparativo com Períodos Anteriores:** Para entender a evolução do custo do estoque ao longo do tempo.
+*   **Análise de Custo por Unidade:** Para avaliar o custo individual de cada item no estoque.
+2025-06-16 15:54:48,690 [INFO] GeminiAssistant: [USER INPUT] (this-is-a-test) Legal!
+Inclua agora uma coluna com o faturamento bruto do mesmo período
+2025-06-16 15:54:50,621 [INFO] GeminiAssistant: [AGENT_INTENT_CLASSIFIER]: include_schema
+2025-06-16 15:54:51,717 [INFO] GeminiAssistant: [AGENT_SCHEMA_CHOOSER]: 'type':['revenue'],'document':data/context\revenue.md
+2025-06-16 15:54:53,578 [INFO] GeminiAssistant: [AGENT_QUERY_BUILDER]: SELECT
+    SUM(t1.vlr_custo_estoque) AS total_custo_estoque_ontem,
+    SUM(t2.vlr_rec_bruta) AS faturamento_total_ontem
+  FROM
+    `maga-bigdata.nets_gestao_info.tgi_estoque_hist` AS t1
+  LEFT JOIN `maga-bigdata.nets_gestao_info.tgi_receita` AS t2 
+    ON t1.sid_tempo = t2.sid_tempo 
+    AND t1.cod_sku_pai = LEFT(t2.cod_sku_filho, 12)
+  WHERE t1.sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
+2025-06-16 15:54:58,216 [INFO] GeminiAssistant: [AGENT_FINAL_RESPONSER]: Olá! Entendi que você solicitou uma análise do custo total do estoque e do faturamento bruto, ambos referentes ao dia de ontem.
 
 **Análise:**
 
-*   **Data:** 10 de junho de 2025
-*   **Estoque Total (saldo):** 92.515.874.044 unidades
-*   **Valor Total do Estoque (custo):** R$ 9.435.581.815.232,91
-*   **Faturamento Total:** R$ 393.579.836.655,65
+*   O custo total do estoque no dia de ontem foi de R$ 811.783.981,16.
+*   O faturamento bruto no dia de ontem foi de R$ 584.892,75.
 
-**Sugestões:**
+**Próximos Passos:**
 
-*   Para uma análise mais completa, podemos comparar o faturamento e o estoque de ontem com os de outros dias, identificando tendências e sazonalidades.
-*   Podemos também detalhar o faturamento por produto ou categoria, para identificar quais itens têm maior impacto na receita.
-*   Além disso, podemos calcular o giro de estoque, que é a relação entre o faturamento e o valor do estoque, para avaliar a eficiência da gestão de estoque.
+Para análises futuras, você pode refinar a consulta para incluir:
+
+*   **Comparativo entre o custo do estoque e o faturamento:** Para entender a relação entre o custo do estoque e a receita gerada.
+*   **Análise da margem bruta:** Para avaliar a rentabilidade das vendas, subtraindo o custo do estoque do faturamento bruto.
+*   **Detalhes por Categoria de Produto:** Para identificar quais categorias contribuem mais para o custo total e para o faturamento.
+*   **Comparativo com Períodos Anteriores:** Para entender a evolução do custo do estoque e do faturamento ao longo do tempo.
+2025-06-16 15:55:33,570 [INFO] GeminiAssistant: [USER INPUT] (this-is-a-test) Ótimo!
+Agora inclua mais uma coluna do valor total de impostos pagos no mesmo período
+2025-06-16 15:55:34,657 [INFO] GeminiAssistant: [AGENT_INTENT_CLASSIFIER]: include_schema
+2025-06-16 15:55:35,830 [INFO] GeminiAssistant: [AGENT_SCHEMA_CHOOSER]: 'type':['revenue'],'document':data/context\revenue.md
+2025-06-16 15:55:38,629 [INFO] GeminiAssistant: [AGENT_QUERY_BUILDER]: 
+SELECT
+    SUM(t1.vlr_custo_estoque) AS total_custo_estoque_ontem,
+    SUM(t2.vlr_rec_bruta) AS faturamento_total_ontem,
+    SUM(t2.vlr_icms + t2.vlr_pis + t2.vlr_cofins + t2.vlr_ipi + t2.vlr_iss + t2.vlr_icms_bonif + t2.vlr_icms_parte_dest + t2.vlr_icms_partil_ori + t2.vlr_fundo_probrez) AS total_impostos_ontem
+  FROM
+    `maga-bigdata.nets_gestao_info.tgi_estoque_hist` AS t1
+  LEFT JOIN `maga-bigdata.nets_gestao_info.tgi_receita` AS t2 
+    ON t1.sid_tempo = t2.sid_tempo 
+    AND t1.cod_sku_pai = LEFT(t2.cod_sku_filho, 12)
+  WHERE t1.sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
+
+2025-06-16 15:55:43,310 [INFO] GeminiAssistant: [AGENT_FINAL_RESPONSER]: Olá! Entendi que você solicitou uma análise do custo total do estoque, do faturamento bruto e do valor total de impostos pagos, todos referentes ao dia de ontem.
+
+**Análise:**
+
+*   O custo total do estoque no dia de ontem foi de R$ 811.783.981,16.
+*   O faturamento bruto no dia de ontem foi de R$ 584.892,75.
+*   O valor total de impostos pagos no dia de ontem foi de R$ 4.366,01.
+
+**Próximos Passos:**
+
+Para análises futuras, você pode refinar a consulta para incluir:
+
+*   **Comparativo entre o custo do estoque, o faturamento e os impostos:** Para entender a relação entre esses três fatores e avaliar o impacto dos impostos na rentabilidade.
+*   **Análise da margem líquida:** Para avaliar a rentabilidade real das vendas, subtraindo o custo do estoque e os impostos do faturamento bruto.
+*   **Detalhes por Categoria de Produto:** Para identificar quais categorias contribuem mais para o custo total, para o faturamento e para os impostos.
+*   **Comparativo com Períodos Anteriores:** Para entender a evolução do custo do estoque, do faturamento e dos impostos ao longo do tempo.
+2025-06-16 15:56:15,643 [INFO] GeminiAssistant: [USER INPUT] (this-is-a-test) Adicione uma coluna com o % de impostos por valor faturado.
+2025-06-16 15:56:16,717 [INFO] GeminiAssistant: [AGENT_INTENT_CLASSIFIER]: include_schema
+2025-06-16 15:56:17,844 [INFO] GeminiAssistant: [AGENT_SCHEMA_CHOOSER]: 'type':['revenue'],'document':data/context\revenue.md
+2025-06-16 15:56:21,280 [INFO] GeminiAssistant: [AGENT_QUERY_BUILDER]: 
+SELECT
+    SUM(t1.vlr_custo_estoque) AS total_custo_estoque_ontem,
+    SUM(t2.vlr_rec_bruta) AS faturamento_total_ontem,
+    SUM(t2.vlr_icms + t2.vlr_pis + t2.vlr_cofins + t2.vlr_ipi + t2.vlr_iss + t2.vlr_icms_bonif + t2.vlr_icms_parte_dest + t2.vlr_icms_partil_ori + t2.vlr_fundo_probrez) AS total_impostos_ontem,
+    (SUM(t2.vlr_icms + t2.vlr_pis + t2.vlr_cofins + t2.vlr_ipi + t2.vlr_iss + t2.vlr_icms_bonif + t2.vlr_icms_parte_dest + t2.vlr_icms_partil_ori + t2.vlr_fundo_probrez) / SUM(t2.vlr_rec_bruta)) * 100 AS percentual_impostos
+  FROM
+    `maga-bigdata.nets_gestao_info.tgi_estoque_hist` AS t1
+  LEFT JOIN `maga-bigdata.nets_gestao_info.tgi_receita` AS t2 
+    ON t1.sid_tempo = t2.sid_tempo 
+    AND t1.cod_sku_pai = LEFT(t2.cod_sku_filho, 12)
+  WHERE t1.sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
+
+2025-06-16 15:56:26,139 [INFO] GeminiAssistant: [AGENT_FINAL_RESPONSER]: Olá! Entendi que você solicitou uma análise do custo total do estoque, do faturamento bruto, do valor total de impostos pagos e do percentual de impostos sobre o faturamento, todos referentes ao dia de ontem.
+
+**Análise:**
+
+*   O custo total do estoque no dia de ontem foi de R$ 811.783.981,16.
+*   O faturamento bruto no dia de ontem foi de R$ 584.892,75.
+*   O valor total de impostos pagos no dia de ontem foi de R$ 4.366,01.
+*   O percentual de impostos sobre o faturamento foi de 0,75%.
+
+**Próximos Passos:**
+
+Para análises futuras, você pode refinar a consulta para incluir:
+
+*   **Análise da margem líquida:** Para avaliar a rentabilidade real das vendas, subtraindo o custo do estoque e os impostos do faturamento bruto.
+*   **Detalhes por Categoria de Produto:** Para identificar quais categorias contribuem mais para o custo total, para o faturamento e para os impostos.
+*   **Comparativo com Períodos Anteriores:** Para entender a evolução do custo do estoque, do faturamento e dos impostos ao longo do tempo.
+*   **Análise da alíquota efetiva de impostos:** Para comparar o percentual de impostos sobre o faturamento com as alíquotas teóricas e identificar possíveis oportunidades de otimização fiscal.
+2025-06-16 16:04:52,634 [INFO] GeminiAssistant: [USER INPUT] (this-is-a-test) Filtre agora esta análise, para que tenhamos apenas os SKUs que a data de primeira compra está no mês atual. Mantenha as mesmas colunas
+2025-06-16 16:04:53,929 [INFO] GeminiAssistant: [AGENT_INTENT_CLASSIFIER]: include_schema
+2025-06-16 16:04:58,402 [INFO] GeminiAssistant: [AGENT_QUERY_BUILDER]: 
+SELECT
+    SUM(t1.vlr_custo_estoque) AS total_custo_estoque_ontem,
+    SUM(t2.vlr_rec_bruta) AS faturamento_total_ontem,
+    SUM(t2.vlr_icms + t2.vlr_pis + t2.vlr_cofins + t2.vlr_ipi + t2.vlr_iss + t2.vlr_icms_bonif + t2.vlr_icms_parte_dest + t2.vlr_icms_partil_ori + t2.vlr_fundo_probrez) AS total_impostos_ontem,
+    (SUM(t2.vlr_icms + t2.vlr_pis + t2.vlr_cofins + t2.vlr_ipi + t2.vlr_iss + t2.vlr_icms_bonif + t2.vlr_icms_parte_dest + t2.vlr_icms_partil_ori + t2.vlr_fundo_probrez) / SUM(t2.vlr_rec_bruta)) * 100 AS percentual_impostos
+  FROM
+    `maga-bigdata.nets_gestao_info.tgi_estoque_hist` AS t1
+  LEFT JOIN `maga-bigdata.nets_gestao_info.tgi_receita` AS t2 
+    ON t1.sid_tempo = t2.sid_tempo 
+    AND t1.cod_sku_pai = LEFT(t2.cod_sku_filho, 12)
+  WHERE t1.sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
+  AND EXTRACT(MONTH FROM t1.dt_prim_compra) = EXTRACT(MONTH FROM CURRENT_DATE())
+
+
+2025-06-16 16:05:04,387 [INFO] GeminiAssistant: [AGENT_FINAL_RESPONSER]: Olá! Entendi que você solicitou uma análise do custo total do estoque, do faturamento bruto, do valor total de impostos pagos e do percentual de impostos sobre o faturamento, todos referentes ao dia de ontem, filtrando apenas os SKUs cuja data da primeira compra está no mês atual.
+
+**Análise:**
+
+*   O custo total do estoque no dia de ontem foi de R$ 140.082.208,68.
+*   O faturamento bruto no dia de ontem foi de R$ 47.364,17.
+*   O valor total de impostos pagos no dia de ontem foi de R$ 396,05.
+*   O percentual de impostos sobre o faturamento foi de 0,84%.
+
+**Próximos Passos:**
+
+Para análises futuras, você pode refinar a consulta para incluir:
+
+*   **Análise da margem líquida:** Para avaliar a rentabilidade real das vendas, subtraindo o custo do estoque e os impostos do faturamento bruto.
+*   **Detalhes por Categoria de Produto:** Para identificar quais categorias contribuem mais para o custo total, para o faturamento e para os impostos.
+*   **Comparativo com Períodos Anteriores:** Para entender a evolução do custo do estoque, do faturamento e dos impostos ao longo do tempo.
+*   **Análise da alíquota efetiva de impostos:** Para comparar o percentual de impostos sobre o faturamento com as alíquotas teóricas e identificar possíveis oportunidades de otimização fiscal.
+*   **Analisar o impacto da data da primeira compra no desempenho dos SKUs:** Para entender se há alguma relação entre a data da primeira compra e o desempenho dos SKUs em termos de custo, faturamento e impostos.
+2025-06-17 14:53:43,791 [INFO] GeminiAssistant: [USER INPUT] (Elton Melo) Quero saber qual foi o meu melhor faturamento dentro desse mês.
+2025-06-17 14:53:45,034 [INFO] GeminiAssistant: [AGENT_INTENT_CLASSIFIER]: analysis-request
+2025-06-17 14:53:46,118 [INFO] GeminiAssistant: [AGENT_SCHEMA_CHOOSER]: 'type':['revenue'],'document':data/context\revenue.md
+2025-06-17 14:53:48,234 [INFO] GeminiAssistant: [AGENT_QUERY_BUILDER]: 
+SELECT
+    sid_tempo,
+    SUM(vlr_rec_bruta) AS receita_total
+FROM
+    `maga-bigdata.nets_gestao_info.tgi_receita`
+WHERE
+    sid_tempo BETWEEN DATE(EXTRACT(YEAR FROM CURRENT_DATE()), EXTRACT(MONTH FROM CURRENT_DATE()), 1) AND CURRENT_DATE()
+GROUP BY
+    sid_tempo
+ORDER BY
+    receita_total DESC
+LIMIT 1
+
+2025-06-17 14:53:52,603 [INFO] GeminiAssistant: [AGENT_FINAL_RESPONSER]: Entendi que você queria saber o dia de maior faturamento do mês.
+
+Com base nos dados que recebi, o dia **11 de junho de 2025** foi o dia com o maior faturamento, totalizando **R$8.415.601,96**.
+
+**Próximos passos:**
+
+*   Você pode refinar a análise, buscando o melhor faturamento por tipo de produto ou região.
+*   Para entender melhor a sazonalidade, analise os dados de faturamento em diferentes meses e anos.
+2025-06-18 15:49:17,821 [INFO] GeminiAssistant: [USER INPUT] (teste_biscoito) opa, queria uma análise de estoque total do dia de ontem
+2025-06-18 15:49:19,330 [INFO] GeminiAssistant: [AGENT_INTENT_CLASSIFIER]: analysis-request
+2025-06-18 15:49:20,422 [INFO] GeminiAssistant: [AGENT_SCHEMA_CHOOSER]: 'type':['stock'],'document':data/context\stock.md
+2025-06-18 15:49:21,868 [INFO] GeminiAssistant: [AGENT_QUERY_BUILDER]: 
+SELECT
+    sid_tempo,
+    SUM(qtd_estoque_saldo) AS total_estoque_ontem
+FROM
+    `maga-bigdata.nets_gestao_info.tgi_estoque_hist`
+WHERE sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
+GROUP BY 1
+
+2025-06-18 15:49:27,135 [INFO] GeminiAssistant: [AGENT_FINAL_RESPONSER]: Olá! Com base na sua solicitação, preparei uma análise do estoque total do dia de ontem.
+
+**Análise:**
+
+*   **Estoque Total em 17 de Junho de 2025:** O estoque total somou 2.037.509 unidades.
+
+**Próximos Passos Sugeridos:**
+
+*   **Análise Comparativa:** Para entender melhor a variação do estoque, sugiro comparar com outros dias ou períodos.
+*   **Análise por Produto:** Podemos detalhar ainda mais, analisando o estoque por produto individualmente.
+*   **Tendências:** Identificar tendências de estoque ao longo do tempo pode ajudar no planejamento e otimização.
+
+Se precisar de análises mais detalhadas ou outras informações, é só me avisar!

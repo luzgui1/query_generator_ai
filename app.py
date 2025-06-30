@@ -55,8 +55,6 @@ if agent_result:
         st.subheader("📊 Amostra de dados")
         st.dataframe(pd.DataFrame(agent_result["preview"]))
 
-    # (the “assistant” message already printed summary above, so no need to repeat)
-
     # — expand for raw JSON
     with st.expander("🔍 Dados brutos do agente"):
         st.json(agent_result)

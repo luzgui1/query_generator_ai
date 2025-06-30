@@ -31,10 +31,28 @@ Tabela histórica com métricas de estoque por SKU, usada em análises internas.
 
 ---
 
-## Exemplos:
+## Exemplos (Utilize esse padrão de desenvolvimento de queries para te orientar em análises com outras métricas):
 
-...
+### Análise de SKUs obsoletos na última semana:
+				SELECT 
+				  sid_tempo
+				  ,(SUM(qtd_aging_06) + SUM(qtd_aging_07) + SUM(qtd_aging_08)) qtd_skus_obsoletos
+				FROM `maga-bigdata.nets_gestao_info.tgi_estoque_hist` 
+				WHERE sid_tempo >= DATE_SUB(CURRENT_DATE('America/Sao_Paulo'), INTERVAL 7 DAY)
+				GROUP BY 1
 
+### Cruzamento de Estoque com Receita para extração de informações:
+#### Exemplo: Receita Bruta e Custo estoque total do dia de ontem.
+				SELECT
+				    SUM(t1.vlr_custo_estoque) AS total_custo_estoque_ontem,
+				    SUM(t2.vlr_rec_bruta) AS faturamento_total_ontem
+			  FROM
+			    `maga-bigdata.nets_gestao_info.tgi_estoque_hist` AS t1
+			  LEFT JOIN `maga-bigdata.nets_gestao_info.tgi_receita` AS t2 
+				    ON t1.sid_tempo = t2.sid_tempo 
+				    AND t1.cod_sku_pai = LEFT(t2.cod_sku_filho, 12) -- sempre utilizar o SKU para cruzar
+			  WHERE t1.sid_tempo = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)
+							
 ## Recomendações:
 
 - Sempre inclua `sid_tempo` em filtros para reduzir leitura de dados.

@@ -14,6 +14,7 @@ O código de SKU possui estrutura hierárquica embutida:
 
 Essa estrutura permite inferência hierárquica via funções como `LEFT(cod_sku_filho, N)` para agrupar, filtrar ou consolidar níveis superiores.
 
+Sempre que uma dada tabela tiver apenas SKU_FILHO, e for necessário cruzar com outra tabela que tenha SKU_PAI, utilize LEFT(cod_sku_filho,12) para efetuar corretamente o JOIN.
 ---
 
 ## Glossário de Negócio

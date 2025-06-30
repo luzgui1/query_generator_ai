@@ -40,9 +40,39 @@ Tabela com informações de receita detalhadas por pedido e SKU filho. Utilizada
 
 ---
 
-## Exemplos  
+## Exemplos (Utilize esse padrão de desenvolvimento de queries para te orientar em análises com outras métricas):
 
-...
+### Quantidade de pedidos devolvidos no dia de ontem:
+			SELECT
+			  sid_tempo
+			  ,COUNT(cod_pedido) qtd_pedidos
+			FROM `maga-bigdata.nets_gestao_info.tgi_receita`
+			WHERE 1=1
+			  AND sid_tempo = DATE_SUB(sid_tempo,INTERVAL 1 DAY)
+			  AND flg_dev = '1'
+			GROUP BY 1
+
+### 5 produtos com maior incidência de imposto do mês atual:
+
+			SELECT
+			  cod_sku_filho
+			  ,(
+			      SUM(vlr_pis)
+			      + SUM(vlr_cofins)
+			      + SUM(vlr_iss)
+			      + SUM(vlr_bonif)
+			      + SUM(vlr_icms)
+			      + SUM(vlr_icms_bonif)
+			      + SUM(vlr_icms_parte_dest)
+			      + SUM(vlr_icms_partil_ori)
+			      + SUM(vlr_fundo_probrez)
+			  ) vlr_impostos
+			FROM `maga-bigdata.nets_gestao_info.tgi_receita`
+			WHERE sid_tempo = CURRENT_DATE()-1
+			GROUP BY 1
+			ORDER BY 2 DESC
+			LIMIT 5
+			
 
 ## Recomendações  
 
